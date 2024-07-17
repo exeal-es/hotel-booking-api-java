@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ public class BookingController {
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.getAll();
-        if (allBookings.stream().anyMatch(booking -> new BookingDates(LocalDate.parse(booking.startDate()), LocalDate.parse(booking.endDate())).overlapsWith(new BookingDates(LocalDate.parse(bookingRequest.startDate()), LocalDate.parse(bookingRequest.endDate()))))) {
+        if (allBookings.stream().anyMatch(booking -> booking.dates().overlapsWith(bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
