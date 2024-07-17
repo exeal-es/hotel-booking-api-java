@@ -1,11 +1,11 @@
 package com.exeal.hotelbooking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +25,8 @@ public class BookingController {
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.getAll();
-        if (allBookings.stream().anyMatch(booking -> booking.startDate().compareTo(bookingRequest.endDate()) < 0 && bookingRequest.startDate().compareTo(booking.startDate()) < 0)) {
-            return ResponseEntity.status(409).build();
+        if (allBookings.stream().anyMatch(booking -> new DateRange(booking.startDate(), booking.endDate()).overlapsWith(new DateRange(bookingRequest.startDate(), bookingRequest.endDate())))) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         String bookingId = UUID.randomUUID().toString();
