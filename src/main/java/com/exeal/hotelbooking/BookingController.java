@@ -25,12 +25,8 @@ public class BookingController {
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.getAll();
-        if (!allBookings.isEmpty()) {
-            for (BookingDetailsResponse booking : allBookings) {
-                if (booking.startDate().compareTo(bookingRequest.endDate()) < 0 && bookingRequest.startDate().compareTo(booking.startDate()) < 0) {
-                    return ResponseEntity.status(409).build();
-                }
-            }
+        if (allBookings.stream().anyMatch(booking -> booking.startDate().compareTo(bookingRequest.endDate()) < 0 && bookingRequest.startDate().compareTo(booking.startDate()) < 0)) {
+            return ResponseEntity.status(409).build();
         }
 
         String bookingId = UUID.randomUUID().toString();
