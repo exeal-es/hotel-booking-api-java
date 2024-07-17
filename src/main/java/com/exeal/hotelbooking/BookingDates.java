@@ -16,11 +16,9 @@ public class BookingDates {
     }
 
     public boolean overlapsWith(BookingDates other) {
-        // Comprobar si el inicio o el fin coinciden exactamente, lo cual no se considera solapamiento
         if (this.startDate.equals(other.endDate) || this.endDate.equals(other.startDate)) {
             return false;
         }
-        // Lógica existente para determinar solapamiento
         return !this.startDate.isAfter(other.endDate) && !this.endDate.isBefore(other.startDate);
     }
 }
