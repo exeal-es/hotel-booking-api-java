@@ -42,4 +42,37 @@ class BookingEndpointTest {
             .body("bookingId", notNullValue())
             .body("message", equalTo("Reservation confirmed"));
     }
+
+    @Test
+    void bookingAndRetrieveDetailsTest() {
+        String requestBody = """
+            {
+                "employeeId": "123",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """;
+
+        String bookingId = given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("bookingId");
+
+        given()
+                .pathParam("bookingId", bookingId)
+                .when()
+                .get("/bookings/{bookingId}")
+                .then()
+                .statusCode(200)
+                .body("employeeId", equalTo("123"))
+                .body("roomId", equalTo("101"))
+                .body("startDate", equalTo("2023-04-01"))
+                .body("endDate", equalTo("2023-04-05"));
+    }
 }
