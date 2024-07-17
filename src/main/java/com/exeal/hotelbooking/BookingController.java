@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,6 +22,15 @@ public class BookingController {
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
         if (bookingRequest.startDate().compareTo(bookingRequest.endDate()) > 0) {
             return ResponseEntity.badRequest().build();
+        }
+
+        Collection<BookingDetailsResponse> allBookings = bookingRepository.getAll();
+        if (!allBookings.isEmpty()) {
+            for (BookingDetailsResponse booking : allBookings) {
+                if (booking.startDate().compareTo(bookingRequest.endDate()) < 0 && bookingRequest.startDate().compareTo(booking.startDate()) < 0) {
+                    return ResponseEntity.status(409).build();
+                }
+            }
         }
 
         String bookingId = UUID.randomUUID().toString();

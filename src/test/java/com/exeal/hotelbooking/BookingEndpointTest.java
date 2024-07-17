@@ -107,4 +107,41 @@ class BookingEndpointTest {
                 .then()
                 .statusCode(400);
     }
+
+    @Test
+    void bookingWithEndDateBetweenAnotherBookingDatesReturnsConflict() {
+        String requestBodyR1 = """
+            {
+                "employeeId": "123",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """;
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR1)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(200);
+
+        String requestBodyR2 = """
+            {
+                "employeeId": "456",
+                "roomId": "101",
+                "startDate": "2023-03-31",
+                "endDate": "2023-04-03"
+            }
+            """;
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR2)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(409); // Verificar que se devuelve un código de estado HTTP 409 Conflict
+    }
 }

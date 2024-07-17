@@ -2,6 +2,7 @@ package com.exeal.hotelbooking;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,5 +16,9 @@ public class BookingRepository {
 
     public BookingDetailsResponse getById(String bookingId) {
         return bookings.get(bookingId);
+    }
+
+    public Collection<BookingDetailsResponse> getAll() {
+        return bookings.values();
     }
 }
