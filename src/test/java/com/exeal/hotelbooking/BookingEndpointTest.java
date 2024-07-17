@@ -75,4 +75,16 @@ class BookingEndpointTest {
                 .body("startDate", equalTo("2023-04-01"))
                 .body("endDate", equalTo("2023-04-05"));
     }
+
+    @Test
+    void getNonExistentBookingDetailsReturnsNotFound() {
+        String nonExistentBookingId = "non-existent-id";
+
+        given()
+                .pathParam("bookingId", nonExistentBookingId)
+                .when()
+                .get("/bookings/{bookingId}")
+                .then()
+                .statusCode(404);
+    }
 }

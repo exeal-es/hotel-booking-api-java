@@ -1,6 +1,7 @@
 package com.exeal.hotelbooking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,7 +25,11 @@ public class BookingController {
     }
 
     @GetMapping("/bookings/{bookingId}")
-    public BookingDetailsResponse getBookingDetails(@PathVariable String bookingId) {
-        return bookingRepository.getById(bookingId);
+    public ResponseEntity<?> getBookingDetails(@PathVariable String bookingId) {
+        BookingDetailsResponse booking = bookingRepository.getById(bookingId);
+        if (booking == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(booking);
     }
 }
