@@ -17,11 +17,15 @@ public class BookingController {
     }
 
     @PostMapping("/bookings")
-    public BookingResponse createBooking(@RequestBody BookingRequest bookingRequest) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
+        if (bookingRequest.startDate().compareTo(bookingRequest.endDate()) > 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
         String bookingId = UUID.randomUUID().toString();
         BookingDetailsResponse booking = new BookingDetailsResponse(bookingId, bookingRequest.employeeId(), bookingRequest.roomId(), bookingRequest.startDate(), bookingRequest.endDate());
         bookingRepository.add(booking);
-        return new BookingResponse(bookingId, "Reservation confirmed");
+        return ResponseEntity.ok(new BookingResponse(bookingId, "Reservation confirmed"));
     }
 
     @GetMapping("/bookings/{bookingId}")
