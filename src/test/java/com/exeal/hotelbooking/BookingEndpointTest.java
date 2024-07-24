@@ -25,7 +25,7 @@ class BookingEndpointTest {
     public void setUp() {
         RestAssured.port = port;
 
-        bookingRepository.clear();
+        bookingRepository.deleteAll();
     }
 
     @Test
