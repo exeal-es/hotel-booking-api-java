@@ -21,4 +21,8 @@ public class BookingRepository {
     public Collection<BookingDetailsResponse> getAll() {
         return bookings.values();
     }
+
+    public void clear() {
+        bookings.clear();
+    }
 }

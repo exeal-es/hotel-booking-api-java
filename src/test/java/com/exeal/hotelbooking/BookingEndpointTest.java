@@ -2,6 +2,7 @@ package com.exeal.hotelbooking;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,12 +15,17 @@ import static org.hamcrest.Matchers.notNullValue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookingEndpointTest {
 
+    @Resource
+    BookingRepository bookingRepository;
+
     @LocalServerPort
     int port;
 
     @BeforeEach
     public void setUp() {
         RestAssured.port = port;
+
+        bookingRepository.clear();
     }
 
     @Test
