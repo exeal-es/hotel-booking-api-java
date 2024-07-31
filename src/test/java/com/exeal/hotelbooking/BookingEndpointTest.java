@@ -37,33 +37,46 @@ class BookingEndpointTest {
     @Test
     void bookingRoomReturnsConfirmation() {
         // Given
-        String hotelId = UUID.randomUUID().toString();
-        Hotel hotel = new Hotel(hotelId);
-        hotel.addRoom("101");
-        hotelRepository.save(hotel);
+        String hotelId = givenAHotelWithASingleRoom("101");
 
         // When
-        String requestBody = String.format("""
-            {
-                "employeeId": "123",
-                "hotelId": "%s",
-                "roomId": "101",
-                "startDate": "2023-04-01",
-                "endDate": "2023-04-05"
-            }
-            """, hotelId);
-
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body(requestBody)
-                .when()
-                .post("/bookings");
+        Response response = bookRoom(hotelId, "101", "2023-04-01", "2023-04-05");
 
         // Then
+        assertBookingConfirmationIsReturned(response);
+    }
+
+    private static void assertBookingConfirmationIsReturned(Response response) {
         response.then()
             .statusCode(200)
             .body("bookingId", notNullValue())
             .body("message", equalTo("Reservation confirmed"));
+    }
+
+    private String givenAHotelWithASingleRoom(String roomId) {
+        String hotelId = UUID.randomUUID().toString();
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom(roomId);
+        hotelRepository.save(hotel);
+        return hotelId;
+    }
+
+    private static Response bookRoom(String hotelId, String roomId, String startDate, String endDate) {
+        String requestBody = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "%s",
+                "startDate": "%s",
+                "endDate": "%s"
+            }
+            """, hotelId, roomId, startDate, endDate);
+
+        return given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/bookings");
     }
 
     @Test
