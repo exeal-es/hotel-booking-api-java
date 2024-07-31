@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.UUID;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -17,6 +19,9 @@ class BookingEndpointTest {
 
     @Resource
     BookingRepository bookingRepository;
+
+    @Resource
+    HotelRepository hotelRepository;
 
     @LocalServerPort
     int port;
@@ -30,14 +35,18 @@ class BookingEndpointTest {
 
     @Test
     void bookingRoomReturnsConfirmation() {
-        String requestBody = """
-                {
-                    "employeeId": "123",
-                    "roomId": "101",
-                    "startDate": "2023-04-01",
-                    "endDate": "2023-04-05"
-                }
-                """;
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBody = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """, hotelId);
 
         given()
             .contentType(ContentType.JSON)
@@ -52,14 +61,18 @@ class BookingEndpointTest {
 
     @Test
     void bookingAndRetrieveDetailsTest() {
-        String requestBody = """
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBody = String.format("""
             {
                 "employeeId": "123",
+                "hotelId": "%s",
                 "roomId": "101",
                 "startDate": "2023-04-01",
                 "endDate": "2023-04-05"
             }
-            """;
+            """, hotelId);
 
         String bookingId = given()
                 .contentType(ContentType.JSON)
@@ -97,14 +110,18 @@ class BookingEndpointTest {
 
     @Test
     void bookingWithStartDateAfterEndDateReturnsBadRequest() {
-        String requestBody = """
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBody = String.format("""
             {
                 "employeeId": "123",
+                "hotelId": "%s",
                 "roomId": "101",
                 "startDate": "2023-04-06",
                 "endDate": "2023-04-05"
             }
-            """;
+            """, hotelId);
 
         given()
                 .contentType(ContentType.JSON)
@@ -117,14 +134,18 @@ class BookingEndpointTest {
 
     @Test
     void bookingWithEndDateBetweenAnotherBookingDatesReturnsConflict() {
-        String requestBodyR1 = """
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBodyR1 = String.format("""
             {
                 "employeeId": "123",
+                "hotelId": "%s",
                 "roomId": "101",
                 "startDate": "2023-04-01",
                 "endDate": "2023-04-05"
             }
-            """;
+            """, hotelId);
 
         given()
                 .contentType(ContentType.JSON)
@@ -134,14 +155,15 @@ class BookingEndpointTest {
                 .then()
                 .statusCode(200);
 
-        String requestBodyR2 = """
+        String requestBodyR2 = String.format("""
             {
-                "employeeId": "456",
+                "employeeId": "123",
+                "hotelId": "%s",
                 "roomId": "101",
                 "startDate": "2023-03-31",
                 "endDate": "2023-04-03"
             }
-            """;
+            """, hotelId);
 
         given()
                 .contentType(ContentType.JSON)
@@ -149,6 +171,29 @@ class BookingEndpointTest {
                 .when()
                 .post("/bookings")
                 .then()
-                .statusCode(409); // Verificar que se devuelve un código de estado HTTP 409 Conflict
+                .statusCode(409);
+    }
+
+    @Test
+    void ifHotelDoesNotExistThenReturn404() {
+        String nonExistentHotelId = UUID.randomUUID().toString();
+
+        String requestBody = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """, nonExistentHotelId);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(404);
     }
 }

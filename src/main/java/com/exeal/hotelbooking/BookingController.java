@@ -16,15 +16,22 @@ import java.util.UUID;
 public class BookingController {
 
     private final BookingRepository bookingRepository;
+    private final HotelRepository hotelRepository;
 
-    public BookingController(BookingRepository bookingRepository) {
+    public BookingController(BookingRepository bookingRepository, HotelRepository hotelRepository) {
         this.bookingRepository = bookingRepository;
+        this.hotelRepository = hotelRepository;
     }
 
     @PostMapping("/bookings")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
         if (bookingRequest.startDate().compareTo(bookingRequest.endDate()) > 0) {
             return ResponseEntity.badRequest().build();
+        }
+
+        Optional<Hotel> hotel = hotelRepository.findById(bookingRequest.hotelId());
+        if (hotel.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.findAll();
