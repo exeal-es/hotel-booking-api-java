@@ -2,6 +2,7 @@ package com.exeal.hotelbooking;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +30,15 @@ public class BookingController {
             return ResponseEntity.badRequest().build();
         }
 
-        Optional<Hotel> hotel = hotelRepository.findById(bookingRequest.hotelId());
-        if (hotel.isEmpty()) {
+        Optional<Hotel> maybeHotel = hotelRepository.findById(bookingRequest.hotelId());
+        if (maybeHotel.isEmpty()) {
             return ResponseEntity.notFound().build();
+        }
+
+        Hotel hotel = maybeHotel.get();
+        if (!hotel.hasRoom(bookingRequest.roomId())) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorDto("Hotel does not have requested room type"));
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.findAll();

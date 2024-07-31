@@ -36,7 +36,9 @@ class BookingEndpointTest {
     @Test
     void bookingRoomReturnsConfirmation() {
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new Hotel(hotelId));
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotelRepository.save(hotel);
 
         String requestBody = String.format("""
             {
@@ -62,7 +64,9 @@ class BookingEndpointTest {
     @Test
     void bookingAndRetrieveDetailsTest() {
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new Hotel(hotelId));
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotelRepository.save(hotel);
 
         String requestBody = String.format("""
             {
@@ -111,7 +115,9 @@ class BookingEndpointTest {
     @Test
     void bookingWithStartDateAfterEndDateReturnsBadRequest() {
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new Hotel(hotelId));
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotelRepository.save(hotel);
 
         String requestBody = String.format("""
             {
@@ -135,7 +141,9 @@ class BookingEndpointTest {
     @Test
     void bookingWithEndDateBetweenAnotherBookingDatesReturnsConflict() {
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new Hotel(hotelId));
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotelRepository.save(hotel);
 
         String requestBodyR1 = String.format("""
             {
@@ -200,7 +208,10 @@ class BookingEndpointTest {
     @Test
     void canBookDifferentTypesOfRoomEvenWithinTheSameDates() {
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new Hotel(hotelId));
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotel.addRoom("102");
+        hotelRepository.save(hotel);
 
         String requestBodyR1 = String.format("""
             {
@@ -237,5 +248,30 @@ class BookingEndpointTest {
                 .post("/bookings")
                 .then()
                 .statusCode(200);
+    }
+
+    @Test
+    void ifHotelDoesNotHaveRoomTypeRequestedThenReturn400() {
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBody = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """, hotelId);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("Hotel does not have requested room type"));
     }
 }

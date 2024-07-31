@@ -3,13 +3,17 @@ package com.exeal.hotelbooking;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Hotel {
 
     @Id
     String hotelId;
+
+    private Set<String> rooms = new HashSet<>();
 
     public Hotel(String hotelId) {
         this.hotelId = hotelId;
@@ -33,5 +37,13 @@ public class Hotel {
     @Override
     public int hashCode() {
         return Objects.hashCode(hotelId);
+    }
+
+    public void addRoom(String roomId) {
+        rooms.add(roomId);
+    }
+
+    public boolean hasRoom(String roomId) {
+        return rooms.contains(roomId);
     }
 }
