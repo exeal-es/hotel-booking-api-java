@@ -2,6 +2,7 @@ package com.exeal.hotelbooking;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,11 +36,13 @@ class BookingEndpointTest {
 
     @Test
     void bookingRoomReturnsConfirmation() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         Hotel hotel = new Hotel(hotelId);
         hotel.addRoom("101");
         hotelRepository.save(hotel);
 
+        // When
         String requestBody = String.format("""
             {
                 "employeeId": "123",
@@ -50,12 +53,14 @@ class BookingEndpointTest {
             }
             """, hotelId);
 
-        given()
-            .contentType(ContentType.JSON)
-            .body(requestBody)
-        .when()
-            .post("/bookings")
-        .then()
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .post("/bookings");
+
+        // Then
+        response.then()
             .statusCode(200)
             .body("bookingId", notNullValue())
             .body("message", equalTo("Reservation confirmed"));
@@ -63,6 +68,7 @@ class BookingEndpointTest {
 
     @Test
     void bookingAndRetrieveDetailsTest() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         Hotel hotel = new Hotel(hotelId);
         hotel.addRoom("101");
@@ -88,11 +94,14 @@ class BookingEndpointTest {
                 .extract()
                 .path("bookingId");
 
-        given()
+        // When
+        Response response = given()
                 .pathParam("bookingId", bookingId)
                 .when()
-                .get("/bookings/{bookingId}")
-                .then()
+                .get("/bookings/{bookingId}");
+
+        // Then
+        response.then()
                 .statusCode(200)
                 .body("employeeId", equalTo("123"))
                 .body("roomId", equalTo("101"))
@@ -102,23 +111,29 @@ class BookingEndpointTest {
 
     @Test
     void getNonExistentBookingDetailsReturnsNotFound() {
+        // Given
         String nonExistentBookingId = "non-existent-id";
 
-        given()
+        // When
+        Response response = given()
                 .pathParam("bookingId", nonExistentBookingId)
                 .when()
-                .get("/bookings/{bookingId}")
-                .then()
+                .get("/bookings/{bookingId}");
+
+        // Then
+        response.then()
                 .statusCode(404);
     }
 
     @Test
     void bookingWithStartDateAfterEndDateReturnsBadRequest() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         Hotel hotel = new Hotel(hotelId);
         hotel.addRoom("101");
         hotelRepository.save(hotel);
 
+        // When
         String requestBody = String.format("""
             {
                 "employeeId": "123",
@@ -129,17 +144,20 @@ class BookingEndpointTest {
             }
             """, hotelId);
 
-        given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .when()
-                .post("/bookings")
-                .then()
+                .post("/bookings");
+
+        // Then
+        response.then()
                 .statusCode(400);
     }
 
     @Test
     void bookingWithEndDateBetweenAnotherBookingDatesReturnsConflict() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         Hotel hotel = new Hotel(hotelId);
         hotel.addRoom("101");
@@ -162,7 +180,7 @@ class BookingEndpointTest {
                 .post("/bookings")
                 .then()
                 .statusCode(200);
-
+        // When
         String requestBodyR2 = String.format("""
             {
                 "employeeId": "123",
@@ -173,19 +191,23 @@ class BookingEndpointTest {
             }
             """, hotelId);
 
-        given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(requestBodyR2)
                 .when()
-                .post("/bookings")
-                .then()
+                .post("/bookings");
+
+        // Then
+        response.then()
                 .statusCode(409);
     }
 
     @Test
     void ifHotelDoesNotExistThenReturn404() {
+        // Given
         String nonExistentHotelId = UUID.randomUUID().toString();
 
+        // When
         String requestBody = String.format("""
             {
                 "employeeId": "123",
@@ -196,23 +218,27 @@ class BookingEndpointTest {
             }
             """, nonExistentHotelId);
 
-        given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .when()
-                .post("/bookings")
-                .then()
+                .post("/bookings");
+
+        // Then
+        response.then()
                 .statusCode(404);
     }
 
     @Test
     void canBookDifferentTypesOfRoomEvenWithinTheSameDates() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         Hotel hotel = new Hotel(hotelId);
         hotel.addRoom("101");
         hotel.addRoom("102");
         hotelRepository.save(hotel);
 
+        // When
         String requestBodyR1 = String.format("""
             {
                 "employeeId": "123",
@@ -241,20 +267,24 @@ class BookingEndpointTest {
             }
             """, hotelId);
 
-        given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(requestBodyR2)
                 .when()
-                .post("/bookings")
-                .then()
+                .post("/bookings");
+
+        // Then
+        response.then()
                 .statusCode(200);
     }
 
     @Test
     void ifHotelDoesNotHaveRoomTypeRequestedThenReturn400() {
+        // Given
         String hotelId = UUID.randomUUID().toString();
         hotelRepository.save(new Hotel(hotelId));
 
+        // When
         String requestBody = String.format("""
             {
                 "employeeId": "123",
@@ -265,12 +295,14 @@ class BookingEndpointTest {
             }
             """, hotelId);
 
-        given()
+        Response response = given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .when()
-                .post("/bookings")
-                .then()
+                .post("/bookings");
+
+        // Then
+        response.then()
                 .statusCode(400)
                 .body("message", equalTo("Hotel does not have requested room type"));
     }
