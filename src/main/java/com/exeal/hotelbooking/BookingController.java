@@ -35,7 +35,7 @@ public class BookingController {
         }
 
         Collection<BookingDetailsResponse> allBookings = bookingRepository.findAll();
-        if (allBookings.stream().anyMatch(booking -> booking.dates().overlapsWith(bookingRequest.dates()))) {
+        if (allBookings.stream().anyMatch(booking -> booking.getRoomId().equals(bookingRequest.roomId()) && booking.dates().overlapsWith(bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 

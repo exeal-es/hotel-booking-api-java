@@ -196,4 +196,46 @@ class BookingEndpointTest {
                 .then()
                 .statusCode(404);
     }
+
+    @Test
+    void canBookDifferentTypesOfRoomEvenWithinTheSameDates() {
+        String hotelId = UUID.randomUUID().toString();
+        hotelRepository.save(new Hotel(hotelId));
+
+        String requestBodyR1 = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """, hotelId);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR1)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(200);
+
+        String requestBodyR2 = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "102",
+                "startDate": "2023-03-01",
+                "endDate": "2023-04-05"
+            }
+            """, hotelId);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR2)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(200);
+    }
 }
