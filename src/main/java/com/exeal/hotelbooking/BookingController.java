@@ -40,13 +40,13 @@ public class BookingController {
                     .body(new ErrorDto("Hotel does not have requested room type"));
         }
 
-        Collection<BookingDetailsResponse> allBookings = bookingRepository.findAll();
+        Collection<Booking> allBookings = bookingRepository.findAll();
         if (allBookings.stream().anyMatch(booking -> booking.getRoomId().equals(bookingRequest.roomId()) && booking.dates().overlapsWith(bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         String bookingId = UUID.randomUUID().toString();
-        BookingDetailsResponse booking = new BookingDetailsResponse(
+        Booking booking = new Booking(
                 bookingId,
                 bookingRequest.employeeId(),
                 bookingRequest.roomId(),
@@ -59,7 +59,7 @@ public class BookingController {
 
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<?> getBookingDetails(@PathVariable String bookingId) {
-        Optional<BookingDetailsResponse> booking = bookingRepository.findById(bookingId);
+        Optional<Booking> booking = bookingRepository.findById(bookingId);
         if (booking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
