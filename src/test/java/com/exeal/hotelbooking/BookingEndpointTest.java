@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ class BookingEndpointTest {
 
     private static void assertBookingConfirmationIsReturned(Response response) {
         response.then()
-            .statusCode(200)
+            .statusCode(HttpStatus.OK.value())
             .body("bookingId", notNullValue())
             .body("message", equalTo("Reservation confirmed"));
     }
@@ -103,7 +104,7 @@ class BookingEndpointTest {
                 .when()
                 .post("/bookings")
                 .then()
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .extract()
                 .path("bookingId");
 
@@ -115,7 +116,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(200)
+                .statusCode(HttpStatus.OK.value())
                 .body("employeeId", equalTo("123"))
                 .body("hotelId", equalTo(hotelId))
                 .body("roomId", equalTo("101"))
@@ -136,7 +137,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(404);
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -166,7 +167,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(400);
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
@@ -193,7 +194,7 @@ class BookingEndpointTest {
                 .when()
                 .post("/bookings")
                 .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.OK.value());
         // When
         String requestBodyR2 = String.format("""
             {
@@ -213,7 +214,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(409);
+                .statusCode(HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -240,7 +241,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(404);
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -269,7 +270,7 @@ class BookingEndpointTest {
                 .when()
                 .post("/bookings")
                 .then()
-                .statusCode(200);
+                .statusCode(HttpStatus.OK.value());
 
         String requestBodyR2 = String.format("""
             {
@@ -289,7 +290,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(200);
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
@@ -317,7 +318,7 @@ class BookingEndpointTest {
 
         // Then
         response.then()
-                .statusCode(400)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .body("message", equalTo("Hotel does not have requested room type"));
     }
 }
