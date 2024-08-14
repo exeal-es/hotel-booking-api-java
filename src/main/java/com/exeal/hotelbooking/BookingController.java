@@ -25,7 +25,7 @@ public class BookingController {
 
     @PostMapping("/bookings")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
-        if (bookingRequest.startDate().compareTo(bookingRequest.endDate()) > 0) {
+        if (bookingRequest.areDatesValid()) {
             return ResponseEntity.badRequest().build();
         }
 
