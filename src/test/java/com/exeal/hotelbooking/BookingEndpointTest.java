@@ -218,6 +218,58 @@ class BookingEndpointTest {
     }
 
     @Test
+    void bookingWithConflictingDatesButDifferentHotelsAreAllowed() {
+        // Given
+        String hotelId = UUID.randomUUID().toString();
+        Hotel hotel = new Hotel(hotelId);
+        hotel.addRoom("101");
+        hotelRepository.save(hotel);
+
+        String hotelId2 = UUID.randomUUID().toString();
+        Hotel hotel2 = new Hotel(hotelId2);
+        hotel2.addRoom("101");
+        hotelRepository.save(hotel2);
+
+        String requestBodyR1 = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-04-01",
+                "endDate": "2023-04-05"
+            }
+            """, hotelId);
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR1)
+                .when()
+                .post("/bookings")
+                .then()
+                .statusCode(HttpStatus.OK.value());
+        // When
+        String requestBodyR2 = String.format("""
+            {
+                "employeeId": "123",
+                "hotelId": "%s",
+                "roomId": "101",
+                "startDate": "2023-03-31",
+                "endDate": "2023-04-03"
+            }
+            """, hotelId2);
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body(requestBodyR2)
+                .when()
+                .post("/bookings");
+
+        // Then
+        response.then()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
     void ifHotelDoesNotExistThenReturn404() {
         // Given
         String nonExistentHotelId = UUID.randomUUID().toString();

@@ -40,8 +40,8 @@ public class BookingController {
                     .body(new ErrorDto("Hotel does not have requested room type"));
         }
 
-        Collection<Booking> allBookings = bookingRepository.findAll();
-        if (allBookings.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
+        Collection<Booking> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
+        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
