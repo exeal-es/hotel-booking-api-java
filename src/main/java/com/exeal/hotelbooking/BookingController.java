@@ -54,6 +54,7 @@ public class BookingController {
         String bookingId = UUID.randomUUID().toString();
         return new Booking(
                 bookingId,
+                bookingRequest.hotelId(),
                 bookingRequest.employeeId(),
                 bookingRequest.roomId(),
                 bookingRequest.startDate(),

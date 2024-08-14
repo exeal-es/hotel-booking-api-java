@@ -117,6 +117,7 @@ class BookingEndpointTest {
         response.then()
                 .statusCode(200)
                 .body("employeeId", equalTo("123"))
+                .body("hotelId", equalTo(hotelId))
                 .body("roomId", equalTo("101"))
                 .body("startDate", equalTo("2023-04-01"))
                 .body("endDate", equalTo("2023-04-05"));

@@ -15,6 +15,7 @@ public class Booking {
     String roomId;
     String startDate;
     String endDate;
+    String hotelId;
 
     public boolean isThereAConflict(String requestedRoomId, BookingDates requestedDates) {
         return roomId.equals(requestedRoomId) && dates().overlapsWith(requestedDates);
@@ -22,6 +23,10 @@ public class Booking {
 
     public String getBookingId() {
         return bookingId;
+    }
+
+    public String getHotelId() {
+        return hotelId;
     }
 
     public String getEmployeeId() {
@@ -43,8 +48,9 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking(String bookingId, String employeeId, String roomId, String startDate, String endDate) {
+    public Booking(String bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
         this.bookingId = bookingId;
+        this.hotelId = hotelId;
         this.employeeId = employeeId;
         this.roomId = roomId;
         this.startDate = startDate;
