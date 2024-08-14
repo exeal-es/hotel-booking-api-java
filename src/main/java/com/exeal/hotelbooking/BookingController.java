@@ -41,24 +41,24 @@ public class BookingController {
         }
 
         Collection<Booking> allBookings = bookingRepository.findAll();
-        if (allBookings.stream().anyMatch(booking -> isThereAConflict(bookingRequest, booking))) {
+        if (allBookings.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
+        Booking booking = createBookingFrom(bookingRequest);
+        bookingRepository.save(booking);
+        return ResponseEntity.ok(new BookingResponse(booking.getBookingId(), "Reservation confirmed"));
+    }
+
+    private static Booking createBookingFrom(BookingRequest bookingRequest) {
         String bookingId = UUID.randomUUID().toString();
-        Booking booking = new Booking(
+        return new Booking(
                 bookingId,
                 bookingRequest.employeeId(),
                 bookingRequest.roomId(),
                 bookingRequest.startDate(),
                 bookingRequest.endDate()
         );
-        bookingRepository.save(booking);
-        return ResponseEntity.ok(new BookingResponse(bookingId, "Reservation confirmed"));
-    }
-
-    private static boolean isThereAConflict(BookingRequest bookingRequest, Booking booking) {
-        return booking.getRoomId().equals(bookingRequest.roomId()) && booking.dates().overlapsWith(bookingRequest.dates());
     }
 
     @GetMapping("/bookings/{bookingId}")

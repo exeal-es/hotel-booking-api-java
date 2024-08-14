@@ -16,6 +16,10 @@ public class Booking {
     String startDate;
     String endDate;
 
+    public boolean isThereAConflict(String requestedRoomId, BookingDates requestedDates) {
+        return roomId.equals(requestedRoomId) && dates().overlapsWith(requestedDates);
+    }
+
     public String getBookingId() {
         return bookingId;
     }
@@ -47,7 +51,7 @@ public class Booking {
         this.endDate = endDate;
     }
 
-    BookingDates dates() {
+    public BookingDates dates() {
         return new BookingDates(LocalDate.parse(startDate), LocalDate.parse(endDate));
     }
 
