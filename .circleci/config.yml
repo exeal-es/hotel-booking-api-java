@@ -17,7 +17,9 @@ jobs:
             echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties
       - run:
           name: Build with Gradle
-          command: ./gradlew build
+          command: |
+            chmod +x ./gradlew
+            ./gradlew build
 
 workflows:
   version: 2
