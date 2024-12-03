@@ -37,8 +37,7 @@ public class BookingController {
                 new HotelId(bookingRequest.hotelId()),
                 new EmployeeId(bookingRequest.employeeId()),
                 new RoomId(bookingRequest.roomId()),
-                bookingRequest.startDate(),
-                bookingRequest.endDate()
+                bookingRequest.dates()
         );
     }
 
@@ -85,8 +84,8 @@ public class BookingController {
                 booking.getBookingId().asString(),
                 booking.getEmployeeId().asString(),
                 booking.getRoomId().asString(),
-                booking.getStartDate(),
-                booking.getEndDate(),
+                booking.dates().startDate().toString(),
+                booking.dates().endDate().toString(),
                 booking.getHotelId().asString()
         );
     }

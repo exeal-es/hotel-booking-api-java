@@ -1,68 +1,66 @@
 package com.exeal.hotelbooking.domain;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 public class Booking {
 
-    private final BookingId bookingId;
-    private final EmployeeId employeeId;
-    private final RoomId roomId;
-    private final String startDate;
-    private final String endDate;
-    private final HotelId hotelId;
+  private final BookingId bookingId;
+  private final EmployeeId employeeId;
+  private final RoomId roomId;
+  private final HotelId hotelId;
+  private final BookingDates bookingDates;
 
-    public boolean isThereAConflict(RoomId requestedRoomId, BookingDates requestedDates) {
-        return roomId.equals(requestedRoomId) && dates().overlapsWith(requestedDates);
-    }
+  public Booking(
+      BookingId bookingId,
+      HotelId hotelId,
+      EmployeeId employeeId,
+      RoomId roomId,
+      BookingDates bookingDates) {
+    this.bookingId = bookingId;
+    this.hotelId = hotelId;
+    this.employeeId = employeeId;
+    this.roomId = roomId;
+    this.bookingDates = bookingDates;
+  }
 
-    public BookingId getBookingId() {
-        return bookingId;
-    }
+  public boolean isThereAConflict(RoomId requestedRoomId, BookingDates requestedDates) {
+    return roomId.equals(requestedRoomId) && bookingDates.overlapsWith(requestedDates);
+  }
 
-    public HotelId getHotelId() {
-        return hotelId;
-    }
+  public BookingId getBookingId() {
+    return bookingId;
+  }
 
-    public EmployeeId getEmployeeId() {
-        return employeeId;
-    }
+  public HotelId getHotelId() {
+    return hotelId;
+  }
 
-    public RoomId getRoomId() {
-        return roomId;
-    }
+  public EmployeeId getEmployeeId() {
+    return employeeId;
+  }
 
-    public String getStartDate() {
-        return startDate;
-    }
+  public RoomId getRoomId() {
+    return roomId;
+  }
 
-    public String getEndDate() {
-        return endDate;
-    }
+  public BookingDates dates() {
+    return bookingDates;
+  }
 
-    public Booking(BookingId bookingId, HotelId hotelId, EmployeeId employeeId, RoomId roomId, String startDate, String endDate) {
-        this.bookingId = bookingId;
-        this.hotelId = hotelId;
-        this.employeeId = employeeId;
-        this.roomId = roomId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Booking booking = (Booking) o;
+    return Objects.equals(bookingId, booking.bookingId)
+        && Objects.equals(employeeId, booking.employeeId)
+        && Objects.equals(roomId, booking.roomId)
+        && Objects.equals(bookingDates, booking.bookingDates)
+        && Objects.equals(hotelId, booking.hotelId);
+  }
 
-    public BookingDates dates() {
-        return new BookingDates(LocalDate.parse(startDate), LocalDate.parse(endDate));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Booking booking = (Booking) o;
-        return Objects.equals(bookingId, booking.bookingId) && Objects.equals(employeeId, booking.employeeId) && Objects.equals(roomId, booking.roomId) && Objects.equals(startDate, booking.startDate) && Objects.equals(endDate, booking.endDate) && Objects.equals(hotelId, booking.hotelId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(bookingId, employeeId, roomId, startDate, endDate, hotelId);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(bookingId, employeeId, roomId, bookingDates, hotelId);
+  }
 }

@@ -1,15 +1,16 @@
 package com.exeal.hotelbooking.infrastructure;
 
 import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingDates;
 import com.exeal.hotelbooking.domain.BookingId;
 import com.exeal.hotelbooking.domain.BookingRepository;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.exeal.hotelbooking.domain.EmployeeId;
 import com.exeal.hotelbooking.domain.HotelId;
 import com.exeal.hotelbooking.domain.RoomId;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,8 +45,8 @@ public class JpaBookingRepository implements BookingRepository {
         booking.getHotelId().asString(),
         booking.getEmployeeId().asString(),
         booking.getRoomId().asString(),
-        booking.getStartDate(),
-        booking.getEndDate());
+        booking.dates().startDate().toString(),
+        booking.dates().endDate().toString());
   }
 
   private Booking mapFrom(BookingModel bookingModel) {
@@ -54,7 +55,8 @@ public class JpaBookingRepository implements BookingRepository {
         new HotelId(bookingModel.getHotelId()),
         new EmployeeId(bookingModel.getEmployeeId()),
         new RoomId(bookingModel.getRoomId()),
-        bookingModel.getStartDate(),
-        bookingModel.getEndDate());
+        new BookingDates(
+            LocalDate.parse(bookingModel.getStartDate()),
+            LocalDate.parse(bookingModel.getEndDate())));
   }
 }
