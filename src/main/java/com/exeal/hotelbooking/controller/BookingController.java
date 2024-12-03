@@ -1,9 +1,10 @@
 package com.exeal.hotelbooking.controller;
 
-import com.exeal.hotelbooking.infrastructure.BookingModel;
-import com.exeal.hotelbooking.infrastructure.BookingDao;
-import com.exeal.hotelbooking.infrastructure.HotelModel;
-import com.exeal.hotelbooking.infrastructure.HotelDao;
+import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelRepository;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,17 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BookingController {
 
-    private final BookingDao bookingRepository;
-    private final HotelDao hotelDao;
+    private final BookingRepository bookingRepository;
+    private final HotelRepository hotelRepository;
 
-    public BookingController(BookingDao bookingDao, HotelDao hotelDao) {
-        this.bookingRepository = bookingDao;
-        this.hotelDao = hotelDao;
+    public BookingController(BookingRepository bookingRepository, HotelRepository hotelRepository) {
+        this.bookingRepository = bookingRepository;
+        this.hotelRepository = hotelRepository;
     }
 
-    private static BookingModel createBookingFrom(BookingRequest bookingRequest) {
+    private static Booking createBookingFrom(BookingRequest bookingRequest) {
         String bookingId = UUID.randomUUID().toString();
-        return new BookingModel(
+        return new Booking(
                 bookingId,
                 bookingRequest.hotelId(),
                 bookingRequest.employeeId(),
@@ -44,46 +45,46 @@ public class BookingController {
             return ResponseEntity.badRequest().build();
         }
 
-        Optional<HotelModel> maybeHotel = hotelDao.findById(bookingRequest.hotelId());
+        Optional<Hotel> maybeHotel = hotelRepository.findByHotelId(bookingRequest.hotelId());
         if (maybeHotel.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        HotelModel hotelModel = maybeHotel.get();
-        if (!hotelModel.hasRoom(bookingRequest.roomId())) {
+        Hotel hotel = maybeHotel.get();
+        if (!hotel.hasRoom(bookingRequest.roomId())) {
             return ResponseEntity.badRequest()
                     .body(new ErrorDto("Hotel does not have requested room type"));
         }
 
-        Collection<BookingModel> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
-        if (allBookingsByHotel.stream().anyMatch(bookingModel -> bookingModel.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
+        Collection<Booking> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
+        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        BookingModel bookingModel = createBookingFrom(bookingRequest);
-        bookingRepository.save(bookingModel);
-        return ResponseEntity.ok(new BookingResponse(bookingModel.getBookingId(), "Reservation confirmed"));
+        Booking booking = createBookingFrom(bookingRequest);
+        bookingRepository.save(booking);
+        return ResponseEntity.ok(new BookingResponseDto(booking.getBookingId(), "Reservation confirmed"));
     }
 
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<?> getBookingDetails(@PathVariable String bookingId) {
-        Optional<BookingModel> optionalBooking = bookingRepository.findById(bookingId);
+        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
         if (optionalBooking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        BookingModel bookingModel = optionalBooking.get();
-        BookingDto bookingDto = mapFrom(bookingModel);
+        Booking booking = optionalBooking.get();
+        BookingDto bookingDto = mapFrom(booking);
         return ResponseEntity.ok(bookingDto);
     }
 
-    private BookingDto mapFrom(BookingModel bookingModel) {
+    private BookingDto mapFrom(Booking booking) {
         return new BookingDto(
-                bookingModel.getBookingId(),
-                bookingModel.getEmployeeId(),
-                bookingModel.getRoomId(),
-                bookingModel.getStartDate(),
-                bookingModel.getEndDate(),
-                bookingModel.getHotelId()
+                booking.getBookingId(),
+                booking.getEmployeeId(),
+                booking.getRoomId(),
+                booking.getStartDate(),
+                booking.getEndDate(),
+                booking.getHotelId()
         );
     }
 }

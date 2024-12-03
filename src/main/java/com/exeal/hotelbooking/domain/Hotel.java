@@ -1,25 +1,17 @@
-package com.exeal.hotelbooking.infrastructure;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+package com.exeal.hotelbooking.domain;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-public class HotelModel {
+public class Hotel {
 
-    @Id
     String hotelId;
 
     private Set<String> rooms = new HashSet<>();
 
-    public HotelModel(String hotelId) {
+    public Hotel(String hotelId) {
         this.hotelId = hotelId;
-    }
-
-    public HotelModel() {
     }
 
     public String getHotelId() {
@@ -30,13 +22,13 @@ public class HotelModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        HotelModel hotelModel = (HotelModel) o;
-        return Objects.equals(hotelId, hotelModel.hotelId);
+        Hotel hotel = (Hotel) o;
+        return Objects.equals(hotelId, hotel.hotelId) && Objects.equals(rooms, hotel.rooms);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(hotelId);
+        return Objects.hash(hotelId, rooms);
     }
 
     public void addRoom(String roomId) {
@@ -45,9 +37,5 @@ public class HotelModel {
 
     public boolean hasRoom(String roomId) {
         return rooms.contains(roomId);
-    }
-
-    public Set<String> getRooms() {
-        return rooms;
     }
 }

@@ -26,7 +26,7 @@ class BookingModelEndpointTest {
     BookingDao bookingDao;
 
     @Resource
-    HotelDao hotelRepository;
+    HotelDao hotelDao;
 
     @LocalServerPort
     int port;
@@ -61,7 +61,7 @@ class BookingModelEndpointTest {
         String hotelId = UUID.randomUUID().toString();
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom(roomId);
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
         return hotelId;
     }
 
@@ -89,7 +89,7 @@ class BookingModelEndpointTest {
         String hotelId = UUID.randomUUID().toString();
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom("101");
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
 
         String requestBody = String.format("""
             {
@@ -149,7 +149,7 @@ class BookingModelEndpointTest {
         String hotelId = UUID.randomUUID().toString();
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom("101");
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
 
         // When
         String requestBody = String.format("""
@@ -179,7 +179,7 @@ class BookingModelEndpointTest {
         String hotelId = UUID.randomUUID().toString();
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom("101");
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
 
         String requestBodyR1 = String.format("""
             {
@@ -226,12 +226,12 @@ class BookingModelEndpointTest {
         String hotelId = UUID.randomUUID().toString();
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom("101");
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
 
         String hotelId2 = UUID.randomUUID().toString();
         HotelModel hotelModel2 = new HotelModel(hotelId2);
         hotelModel2.addRoom("101");
-        hotelRepository.save(hotelModel2);
+        hotelDao.save(hotelModel2);
 
         String requestBodyR1 = String.format("""
             {
@@ -306,7 +306,7 @@ class BookingModelEndpointTest {
         HotelModel hotelModel = new HotelModel(hotelId);
         hotelModel.addRoom("101");
         hotelModel.addRoom("102");
-        hotelRepository.save(hotelModel);
+        hotelDao.save(hotelModel);
 
         // When
         String requestBodyR1 = String.format("""
@@ -352,7 +352,7 @@ class BookingModelEndpointTest {
     void ifHotelDoesNotHaveRoomTypeRequestedThenReturn400() {
         // Given
         String hotelId = UUID.randomUUID().toString();
-        hotelRepository.save(new HotelModel(hotelId));
+        hotelDao.save(new HotelModel(hotelId));
 
         // When
         String requestBody = String.format("""
