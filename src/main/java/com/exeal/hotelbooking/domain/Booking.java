@@ -6,13 +6,13 @@ import java.util.Objects;
 public class Booking {
 
     private final BookingId bookingId;
-    private final String employeeId;
-    private final String roomId;
+    private final EmployeeId employeeId;
+    private final RoomId roomId;
     private final String startDate;
     private final String endDate;
-    private final String hotelId;
+    private final HotelId hotelId;
 
-    public boolean isThereAConflict(String requestedRoomId, BookingDates requestedDates) {
+    public boolean isThereAConflict(RoomId requestedRoomId, BookingDates requestedDates) {
         return roomId.equals(requestedRoomId) && dates().overlapsWith(requestedDates);
     }
 
@@ -20,15 +20,15 @@ public class Booking {
         return bookingId;
     }
 
-    public String getHotelId() {
+    public HotelId getHotelId() {
         return hotelId;
     }
 
-    public String getEmployeeId() {
+    public EmployeeId getEmployeeId() {
         return employeeId;
     }
 
-    public String getRoomId() {
+    public RoomId getRoomId() {
         return roomId;
     }
 
@@ -40,7 +40,7 @@ public class Booking {
         return endDate;
     }
 
-    public Booking(BookingId bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
+    public Booking(BookingId bookingId, HotelId hotelId, EmployeeId employeeId, RoomId roomId, String startDate, String endDate) {
         this.bookingId = bookingId;
         this.hotelId = hotelId;
         this.employeeId = employeeId;

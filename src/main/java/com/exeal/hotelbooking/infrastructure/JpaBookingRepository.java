@@ -6,6 +6,10 @@ import com.exeal.hotelbooking.domain.BookingRepository;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.exeal.hotelbooking.domain.EmployeeId;
+import com.exeal.hotelbooking.domain.HotelId;
+import com.exeal.hotelbooking.domain.RoomId;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,9 +41,9 @@ public class JpaBookingRepository implements BookingRepository {
   private BookingModel mapTo(Booking booking) {
     return new BookingModel(
         booking.getBookingId().asString(),
-        booking.getHotelId(),
-        booking.getEmployeeId(),
-        booking.getRoomId(),
+        booking.getHotelId().asString(),
+        booking.getEmployeeId().asString(),
+        booking.getRoomId().asString(),
         booking.getStartDate(),
         booking.getEndDate());
   }
@@ -47,9 +51,9 @@ public class JpaBookingRepository implements BookingRepository {
   private Booking mapFrom(BookingModel bookingModel) {
     return new Booking(
         BookingId.fromString(bookingModel.getBookingId()),
-        bookingModel.getHotelId(),
-        bookingModel.getEmployeeId(),
-        bookingModel.getRoomId(),
+        new HotelId(bookingModel.getHotelId()),
+        new EmployeeId(bookingModel.getEmployeeId()),
+        new RoomId(bookingModel.getRoomId()),
         bookingModel.getStartDate(),
         bookingModel.getEndDate());
   }

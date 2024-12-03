@@ -3,12 +3,15 @@ package com.exeal.hotelbooking.controller;
 import com.exeal.hotelbooking.domain.Booking;
 import com.exeal.hotelbooking.domain.BookingId;
 import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.domain.EmployeeId;
 import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelId;
 import com.exeal.hotelbooking.domain.HotelRepository;
 
 import java.util.Collection;
 import java.util.Optional;
 
+import com.exeal.hotelbooking.domain.RoomId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,9 +34,9 @@ public class BookingController {
     private static Booking createBookingFrom(BookingRequest bookingRequest) {
         return new Booking(
                 BookingId.generate(),
-                bookingRequest.hotelId(),
-                bookingRequest.employeeId(),
-                bookingRequest.roomId(),
+                new HotelId(bookingRequest.hotelId()),
+                new EmployeeId(bookingRequest.employeeId()),
+                new RoomId(bookingRequest.roomId()),
                 bookingRequest.startDate(),
                 bookingRequest.endDate()
         );
@@ -57,7 +60,7 @@ public class BookingController {
         }
 
         Collection<Booking> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
-        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
+        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(new RoomId(bookingRequest.roomId()), bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
@@ -80,11 +83,11 @@ public class BookingController {
     private BookingDto mapFrom(Booking booking) {
         return new BookingDto(
                 booking.getBookingId().asString(),
-                booking.getEmployeeId(),
-                booking.getRoomId(),
+                booking.getEmployeeId().asString(),
+                booking.getRoomId().asString(),
                 booking.getStartDate(),
                 booking.getEndDate(),
-                booking.getHotelId()
+                booking.getHotelId().asString()
         );
     }
 }
