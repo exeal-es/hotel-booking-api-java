@@ -1,4 +1,4 @@
-package com.exeal.hotelbooking;
+package com.exeal.hotelbooking.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

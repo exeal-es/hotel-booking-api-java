@@ -1,5 +1,9 @@
-package com.exeal.hotelbooking;
+package com.exeal.hotelbooking.controller;
 
+import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,6 @@
-package com.exeal.hotelbooking;
+package com.exeal.hotelbooking.controller;
+
+import com.exeal.hotelbooking.domain.BookingDates;
 
 import java.time.LocalDate;
 

@@ -1,5 +1,8 @@
 package com.exeal.hotelbooking;
 
+import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;

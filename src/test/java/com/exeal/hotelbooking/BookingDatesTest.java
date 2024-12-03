@@ -1,5 +1,6 @@
 package com.exeal.hotelbooking;
 
+import com.exeal.hotelbooking.domain.BookingDates;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
