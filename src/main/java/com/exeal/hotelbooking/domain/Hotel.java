@@ -6,36 +6,36 @@ import java.util.Set;
 
 public class Hotel {
 
-    String hotelId;
+  private final HotelId hotelId;
 
-    private Set<String> rooms = new HashSet<>();
+  private final Set<RoomId> rooms = new HashSet<>();
 
-    public Hotel(String hotelId) {
-        this.hotelId = hotelId;
-    }
+  public Hotel(HotelId hotelId) {
+    this.hotelId = hotelId;
+  }
 
-    public String getHotelId() {
-        return hotelId;
-    }
+  public HotelId getHotelId() {
+    return hotelId;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Hotel hotel = (Hotel) o;
-        return Objects.equals(hotelId, hotel.hotelId) && Objects.equals(rooms, hotel.rooms);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Hotel hotel = (Hotel) o;
+    return Objects.equals(hotelId, hotel.hotelId) && Objects.equals(rooms, hotel.rooms);
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(hotelId, rooms);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(hotelId, rooms);
+  }
 
-    public void addRoom(String roomId) {
-        rooms.add(roomId);
-    }
+  public void addRoom(RoomId roomId) {
+    rooms.add(roomId);
+  }
 
-    public boolean hasRoom(String roomId) {
-        return rooms.contains(roomId);
-    }
+  public boolean hasRoom(RoomId roomId) {
+    return rooms.contains(roomId);
+  }
 }

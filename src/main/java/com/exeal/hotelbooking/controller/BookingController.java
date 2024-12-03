@@ -58,7 +58,7 @@ public class BookingController {
         }
 
         Hotel hotel = maybeHotel.get();
-        if (!hotel.hasRoom(bookingRequest.roomId())) {
+        if (!hotel.hasRoom(new RoomId(bookingRequest.roomId()))) {
             return ResponseEntity.badRequest()
                     .body(new ErrorDto("Hotel does not have requested room type"));
         }

@@ -1,7 +1,9 @@
 package com.exeal.hotelbooking.infrastructure;
 
 import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelId;
 import com.exeal.hotelbooking.domain.HotelRepository;
+import com.exeal.hotelbooking.domain.RoomId;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,9 +23,9 @@ public class JpaHotelRepository implements HotelRepository {
   }
 
   private Hotel mapTo(HotelModel hotelModel) {
-    Hotel hotel = new Hotel(hotelModel.getHotelId());
+    Hotel hotel = new Hotel(new HotelId(hotelModel.getHotelId()));
     for (String roomId : hotelModel.getRooms()) {
-      hotel.addRoom(roomId);
+      hotel.addRoom(new RoomId(roomId));
     }
     return hotel;
   }
