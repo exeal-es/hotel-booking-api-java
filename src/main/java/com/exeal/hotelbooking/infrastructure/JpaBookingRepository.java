@@ -1,12 +1,12 @@
 package com.exeal.hotelbooking.infrastructure;
 
 import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingId;
 import com.exeal.hotelbooking.domain.BookingRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 public class JpaBookingRepository implements BookingRepository {
@@ -36,7 +36,7 @@ public class JpaBookingRepository implements BookingRepository {
 
   private BookingModel mapTo(Booking booking) {
     return new BookingModel(
-        booking.getBookingId(),
+        booking.getBookingId().asString(),
         booking.getHotelId(),
         booking.getEmployeeId(),
         booking.getRoomId(),
@@ -46,7 +46,7 @@ public class JpaBookingRepository implements BookingRepository {
 
   private Booking mapFrom(BookingModel bookingModel) {
     return new Booking(
-        bookingModel.getBookingId(),
+        BookingId.fromString(bookingModel.getBookingId()),
         bookingModel.getHotelId(),
         bookingModel.getEmployeeId(),
         bookingModel.getRoomId(),

@@ -1,13 +1,14 @@
 package com.exeal.hotelbooking.controller;
 
 import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingId;
 import com.exeal.hotelbooking.domain.BookingRepository;
 import com.exeal.hotelbooking.domain.Hotel;
 import com.exeal.hotelbooking.domain.HotelRepository;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +29,8 @@ public class BookingController {
     }
 
     private static Booking createBookingFrom(BookingRequest bookingRequest) {
-        String bookingId = UUID.randomUUID().toString();
         return new Booking(
-                bookingId,
+                BookingId.generate(),
                 bookingRequest.hotelId(),
                 bookingRequest.employeeId(),
                 bookingRequest.roomId(),
@@ -63,7 +63,7 @@ public class BookingController {
 
         Booking booking = createBookingFrom(bookingRequest);
         bookingRepository.save(booking);
-        return ResponseEntity.ok(new BookingResponseDto(booking.getBookingId(), "Reservation confirmed"));
+        return ResponseEntity.ok(new BookingResponseDto(booking.getBookingId().asString(), "Reservation confirmed"));
     }
 
     @GetMapping("/bookings/{bookingId}")
@@ -79,7 +79,7 @@ public class BookingController {
 
     private BookingDto mapFrom(Booking booking) {
         return new BookingDto(
-                booking.getBookingId(),
+                booking.getBookingId().asString(),
                 booking.getEmployeeId(),
                 booking.getRoomId(),
                 booking.getStartDate(),

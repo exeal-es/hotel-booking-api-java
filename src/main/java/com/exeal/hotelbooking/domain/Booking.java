@@ -5,18 +5,18 @@ import java.util.Objects;
 
 public class Booking {
 
-    String bookingId;
-    String employeeId;
-    String roomId;
-    String startDate;
-    String endDate;
-    String hotelId;
+    private final BookingId bookingId;
+    private final String employeeId;
+    private final String roomId;
+    private final String startDate;
+    private final String endDate;
+    private final String hotelId;
 
     public boolean isThereAConflict(String requestedRoomId, BookingDates requestedDates) {
         return roomId.equals(requestedRoomId) && dates().overlapsWith(requestedDates);
     }
 
-    public String getBookingId() {
+    public BookingId getBookingId() {
         return bookingId;
     }
 
@@ -40,7 +40,7 @@ public class Booking {
         return endDate;
     }
 
-    public Booking(String bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
+    public Booking(BookingId bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
         this.bookingId = bookingId;
         this.hotelId = hotelId;
         this.employeeId = employeeId;
