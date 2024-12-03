@@ -1,8 +1,8 @@
 package com.exeal.hotelbooking;
 
-import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.infrastructure.BookingDao;
 import com.exeal.hotelbooking.domain.Hotel;
-import com.exeal.hotelbooking.domain.HotelRepository;
+import com.exeal.hotelbooking.infrastructure.HotelDao;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -23,10 +23,10 @@ import static org.hamcrest.Matchers.notNullValue;
 class BookingEndpointTest {
 
     @Resource
-    BookingRepository bookingRepository;
+    BookingDao bookingDao;
 
     @Resource
-    HotelRepository hotelRepository;
+    HotelDao hotelRepository;
 
     @LocalServerPort
     int port;
@@ -35,7 +35,7 @@ class BookingEndpointTest {
     public void setUp() {
         RestAssured.port = port;
 
-        bookingRepository.deleteAll();
+        bookingDao.deleteAll();
     }
 
     @Test

@@ -1,9 +1,9 @@
 package com.exeal.hotelbooking.controller;
 
 import com.exeal.hotelbooking.domain.Booking;
-import com.exeal.hotelbooking.domain.BookingRepository;
+import com.exeal.hotelbooking.infrastructure.BookingDao;
 import com.exeal.hotelbooking.domain.Hotel;
-import com.exeal.hotelbooking.domain.HotelRepository;
+import com.exeal.hotelbooking.infrastructure.HotelDao;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BookingController {
 
-    private final BookingRepository bookingRepository;
-    private final HotelRepository hotelRepository;
+    private final BookingDao bookingRepository;
+    private final HotelDao hotelDao;
 
-    public BookingController(BookingRepository bookingRepository, HotelRepository hotelRepository) {
-        this.bookingRepository = bookingRepository;
-        this.hotelRepository = hotelRepository;
+    public BookingController(BookingDao bookingDao, HotelDao hotelDao) {
+        this.bookingRepository = bookingDao;
+        this.hotelDao = hotelDao;
     }
 
     private static Booking createBookingFrom(BookingRequest bookingRequest) {
@@ -44,7 +44,7 @@ public class BookingController {
             return ResponseEntity.badRequest().build();
         }
 
-        Optional<Hotel> maybeHotel = hotelRepository.findById(bookingRequest.hotelId());
+        Optional<Hotel> maybeHotel = hotelDao.findById(bookingRequest.hotelId());
         if (maybeHotel.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
