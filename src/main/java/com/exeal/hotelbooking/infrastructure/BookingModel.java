@@ -1,5 +1,6 @@
-package com.exeal.hotelbooking.domain;
+package com.exeal.hotelbooking.infrastructure;
 
+import com.exeal.hotelbooking.domain.BookingDates;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 

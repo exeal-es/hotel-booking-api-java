@@ -1,8 +1,8 @@
 package com.exeal.hotelbooking.controller;
 
-import com.exeal.hotelbooking.domain.BookingModel;
+import com.exeal.hotelbooking.infrastructure.BookingModel;
 import com.exeal.hotelbooking.infrastructure.BookingDao;
-import com.exeal.hotelbooking.domain.HotelModel;
+import com.exeal.hotelbooking.infrastructure.HotelModel;
 import com.exeal.hotelbooking.infrastructure.HotelDao;
 import java.util.Collection;
 import java.util.Optional;

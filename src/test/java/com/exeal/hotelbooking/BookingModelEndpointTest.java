@@ -1,6 +1,6 @@
 package com.exeal.hotelbooking;
 
-import com.exeal.hotelbooking.domain.HotelModel;
+import com.exeal.hotelbooking.infrastructure.HotelModel;
 import com.exeal.hotelbooking.infrastructure.BookingDao;
 import com.exeal.hotelbooking.infrastructure.HotelDao;
 import io.restassured.RestAssured;

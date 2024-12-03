@@ -1,6 +1,5 @@
 package com.exeal.hotelbooking.infrastructure;
 
-import com.exeal.hotelbooking.domain.BookingModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
