@@ -1,6 +1,7 @@
 package com.exeal.hotelbooking.controller;
 
 import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingDates;
 import com.exeal.hotelbooking.domain.BookingId;
 import com.exeal.hotelbooking.domain.BookingRepository;
 import com.exeal.hotelbooking.domain.EmployeeId;
@@ -8,9 +9,11 @@ import com.exeal.hotelbooking.domain.Hotel;
 import com.exeal.hotelbooking.domain.HotelId;
 import com.exeal.hotelbooking.domain.HotelRepository;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Optional;
 
+import com.exeal.hotelbooking.domain.Result;
 import com.exeal.hotelbooking.domain.RoomId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,21 +34,23 @@ public class BookingController {
         this.hotelRepository = hotelRepository;
     }
 
-    private static Booking createBookingFrom(BookingRequest bookingRequest) {
+    private static Booking createBookingFrom(BookingRequest bookingRequest, BookingDates dates) {
         return new Booking(
                 BookingId.generate(),
                 new HotelId(bookingRequest.hotelId()),
                 new EmployeeId(bookingRequest.employeeId()),
                 new RoomId(bookingRequest.roomId()),
-                bookingRequest.dates()
+                dates
         );
     }
 
     @PostMapping("/bookings")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
-        if (bookingRequest.areDatesValid()) {
+        Result<BookingDates> datesResult = BookingDates.create(LocalDate.parse(bookingRequest.startDate()), LocalDate.parse(bookingRequest.endDate()));
+        if (!datesResult.isValid()) {
             return ResponseEntity.badRequest().build();
         }
+        BookingDates dates = datesResult.get();
 
         Optional<Hotel> maybeHotel = hotelRepository.findByHotelId(bookingRequest.hotelId());
         if (maybeHotel.isEmpty()) {
@@ -59,11 +64,11 @@ public class BookingController {
         }
 
         Collection<Booking> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
-        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(new RoomId(bookingRequest.roomId()), bookingRequest.dates()))) {
+        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(new RoomId(bookingRequest.roomId()), dates))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        Booking booking = createBookingFrom(bookingRequest);
+        Booking booking = createBookingFrom(bookingRequest, dates);
         bookingRepository.save(booking);
         return ResponseEntity.ok(new BookingResponseDto(booking.getBookingId().asString(), "Reservation confirmed"));
     }

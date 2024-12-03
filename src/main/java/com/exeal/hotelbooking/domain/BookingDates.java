@@ -7,13 +7,16 @@ public class BookingDates {
   private final LocalDate startDate;
   private final LocalDate endDate;
 
-  public BookingDates(LocalDate startDate, LocalDate endDate) {
-    if (startDate.isAfter(endDate) || startDate.equals(endDate)) {
-      throw new IllegalArgumentException("Booking duration must be at least one day");
-    }
-
+  private BookingDates(LocalDate startDate, LocalDate endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
+  }
+
+  public static Result<BookingDates> create(LocalDate startDate, LocalDate endDate) {
+    if (startDate.isAfter(endDate) || startDate.equals(endDate)) {
+      return Result.failure("Booking duration must be at least one day");
+    }
+    return Result.ok(new BookingDates(startDate, endDate));
   }
 
   public boolean overlapsWith(BookingDates other) {

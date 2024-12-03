@@ -55,8 +55,8 @@ public class JpaBookingRepository implements BookingRepository {
         new HotelId(bookingModel.getHotelId()),
         new EmployeeId(bookingModel.getEmployeeId()),
         new RoomId(bookingModel.getRoomId()),
-        new BookingDates(
-            LocalDate.parse(bookingModel.getStartDate()),
-            LocalDate.parse(bookingModel.getEndDate())));
+            BookingDates.create(
+                LocalDate.parse(bookingModel.getStartDate()),
+                LocalDate.parse(bookingModel.getEndDate())).get());
   }
 }
