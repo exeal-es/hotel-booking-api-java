@@ -1,7 +1,7 @@
 package com.exeal.hotelbooking.infrastructure;
 
-import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface HotelDao extends JpaRepository<Hotel, String> {
+public interface HotelDao extends JpaRepository<HotelModel, String> {
 }

@@ -8,18 +8,18 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-public class Hotel {
+public class HotelModel {
 
     @Id
     String hotelId;
 
     private Set<String> rooms = new HashSet<>();
 
-    public Hotel(String hotelId) {
+    public HotelModel(String hotelId) {
         this.hotelId = hotelId;
     }
 
-    public Hotel() {
+    public HotelModel() {
     }
 
     public String getHotelId() {
@@ -30,8 +30,8 @@ public class Hotel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Hotel hotel = (Hotel) o;
-        return Objects.equals(hotelId, hotel.hotelId);
+        HotelModel hotelModel = (HotelModel) o;
+        return Objects.equals(hotelId, hotelModel.hotelId);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.exeal.hotelbooking.controller;
 
-import com.exeal.hotelbooking.domain.Booking;
+import com.exeal.hotelbooking.domain.BookingModel;
 import com.exeal.hotelbooking.infrastructure.BookingDao;
-import com.exeal.hotelbooking.domain.Hotel;
+import com.exeal.hotelbooking.domain.HotelModel;
 import com.exeal.hotelbooking.infrastructure.HotelDao;
 import java.util.Collection;
 import java.util.Optional;
@@ -26,9 +26,9 @@ public class BookingController {
         this.hotelDao = hotelDao;
     }
 
-    private static Booking createBookingFrom(BookingRequest bookingRequest) {
+    private static BookingModel createBookingFrom(BookingRequest bookingRequest) {
         String bookingId = UUID.randomUUID().toString();
-        return new Booking(
+        return new BookingModel(
                 bookingId,
                 bookingRequest.hotelId(),
                 bookingRequest.employeeId(),
@@ -44,46 +44,46 @@ public class BookingController {
             return ResponseEntity.badRequest().build();
         }
 
-        Optional<Hotel> maybeHotel = hotelDao.findById(bookingRequest.hotelId());
+        Optional<HotelModel> maybeHotel = hotelDao.findById(bookingRequest.hotelId());
         if (maybeHotel.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        Hotel hotel = maybeHotel.get();
-        if (!hotel.hasRoom(bookingRequest.roomId())) {
+        HotelModel hotelModel = maybeHotel.get();
+        if (!hotelModel.hasRoom(bookingRequest.roomId())) {
             return ResponseEntity.badRequest()
                     .body(new ErrorDto("Hotel does not have requested room type"));
         }
 
-        Collection<Booking> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
-        if (allBookingsByHotel.stream().anyMatch(booking -> booking.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
+        Collection<BookingModel> allBookingsByHotel = bookingRepository.findAllByHotelId(bookingRequest.hotelId());
+        if (allBookingsByHotel.stream().anyMatch(bookingModel -> bookingModel.isThereAConflict(bookingRequest.roomId(), bookingRequest.dates()))) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        Booking booking = createBookingFrom(bookingRequest);
-        bookingRepository.save(booking);
-        return ResponseEntity.ok(new BookingResponse(booking.getBookingId(), "Reservation confirmed"));
+        BookingModel bookingModel = createBookingFrom(bookingRequest);
+        bookingRepository.save(bookingModel);
+        return ResponseEntity.ok(new BookingResponse(bookingModel.getBookingId(), "Reservation confirmed"));
     }
 
     @GetMapping("/bookings/{bookingId}")
     public ResponseEntity<?> getBookingDetails(@PathVariable String bookingId) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
+        Optional<BookingModel> optionalBooking = bookingRepository.findById(bookingId);
         if (optionalBooking.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Booking booking = optionalBooking.get();
-        BookingDto bookingDto = mapFrom(booking);
+        BookingModel bookingModel = optionalBooking.get();
+        BookingDto bookingDto = mapFrom(bookingModel);
         return ResponseEntity.ok(bookingDto);
     }
 
-    private BookingDto mapFrom(Booking booking) {
+    private BookingDto mapFrom(BookingModel bookingModel) {
         return new BookingDto(
-                booking.getBookingId(),
-                booking.getEmployeeId(),
-                booking.getRoomId(),
-                booking.getStartDate(),
-                booking.getEndDate(),
-                booking.getHotelId()
+                bookingModel.getBookingId(),
+                bookingModel.getEmployeeId(),
+                bookingModel.getRoomId(),
+                bookingModel.getStartDate(),
+                bookingModel.getEndDate(),
+                bookingModel.getHotelId()
         );
     }
 }

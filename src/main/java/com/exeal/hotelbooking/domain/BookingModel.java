@@ -8,7 +8,7 @@ import java.util.Objects;
 
 // TODO: Try to convert this to record and make it work with JPA.
 @Entity
-public class Booking {
+public class BookingModel {
 
     @Id String bookingId;
     String employeeId;
@@ -45,10 +45,10 @@ public class Booking {
         return endDate;
     }
 
-    public Booking() {
+    public BookingModel() {
     }
 
-    public Booking(String bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
+    public BookingModel(String bookingId, String hotelId, String employeeId, String roomId, String startDate, String endDate) {
         this.bookingId = bookingId;
         this.hotelId = hotelId;
         this.employeeId = employeeId;
@@ -65,7 +65,7 @@ public class Booking {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Booking that = (Booking) o;
+        BookingModel that = (BookingModel) o;
         return Objects.equals(bookingId, that.bookingId) && Objects.equals(employeeId, that.employeeId) && Objects.equals(roomId, that.roomId) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
     }
 
